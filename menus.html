@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dieta Light - Menú</title>
+        <link rel="stylesheet" href="estilo.css">
+        <script defer src="menus.js"></script>
+    </head>
+    <body>
+        <header>
+            <div class="logo-container">
+                <img src="hamburguesa.png">
+                <div class="logo">Dieta<span style="color: orangered;"> Light</span></div>
+            </div>
+            <nav>
+                <ul>
+                    <a href="index.html">Inicio</a>
+                    <button onclick="scrollToSection('entradas')">Entradas</button>
+                    <button onclick="scrollToSection('platos')">Platos fuertes</button>
+                    <button onclick="scrollToSection('bebidas')">Bebidas</button>
+                    <button onclick="scrollToSection('postres')">Postres</button>
+                    <a href="carrito.html">Ordene Online</a>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="menu-content">
+            <section id="entradas" class="menu-section">
+                <h2>🍽️ Entradas</h2>
+                <div class="menu-items" id="entradas-container"></div>
+            </section>
+            <section id="platos" class="menu-section">
+                <h2>🍔🍟 Platos Fuertes</h2>
+                <div class="menu-items" id="platos-container"></div>
+            </section>
+            <section id="bebidas" class="menu-section">
+                <h2>🥤 Bebidas</h2>
+                <div class="menu-items" id="bebidas-container"></div>
+            </section>
+            <section id="postres" class="menu-section">
+                <h2>🍰🍧 Postres</h2>
+                <div class="menu-items" id="postres-container"></div>
+            </section>
+        </main>
+    </body>
+</html>

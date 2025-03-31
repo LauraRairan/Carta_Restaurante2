@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dieta Light</title>
+        <link rel="stylesheet" href="estilo.css">
+        <script src="menus.js"></script>
+    </head>
+    <body id="carrito_body">
+        <header id="caarrito_header">
+            <div class="logo-container">
+                <img src="hamburguesa.png" alt="icono" class="logofoto">
+                <div class="logo">Dieta<span style="color: orangered;">
+                        Light</span></div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="menus.html">Entradas</a></li>
+                    <li><a href="menus.html">Platos fuertes</a></li>
+                    <li><a href="menus.html">Bebidas</a></li>
+                    <li><a href="menus.html">Postres</a></li>
+                    <li><a href="carrito.html">Ordenes Online</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main id="carrito_main">
+            <section class="products">
+                <h2>Productos Disponibles</h2> 
+                <div id="product-list"></div>
+            </section>
+            <section class="cart">
+                <h2>Resumen de la Orden</h2>
+                <div id="cart-items"></div>
+                <div class="cart-summary">
+                    <p><br>Productos: <span id="total-products">0</span></p>
+                    <p>Total producto: <span id="val_t_prodcut">$0</span></p>
+                    <p>Envio: <span id="Envio">$5.000</span></p>
+                    <p>Total neto: <span id="total-price">$0</span></p>
+                    <br>
+                    
+                    <div class="info_client">
+                    <h2><br> Información del Cliente</h2>
+                    <label>Dirección: <input type="text" id="address"></label>
+                    <label>Casa / Piso / Apto: <input type="text" id="apartment"></label>
+                    <label>Teléfono: <input type="text" id="phone"></label>
+
+                    <button class="checkout">Finalizar Compra</button>
+                    <button class="limpiar_ca">Limpiar 🗑️ </button>
+                    </div>
+                </div>
+                <br>
+            </section>
+        </main>
+    </body>
+</html>
