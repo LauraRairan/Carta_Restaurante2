@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const totalPrice = document.getElementById("total-price");
     const apiUrl = "https://script.google.com/macros/s/AKfycbyK_dhbSSxREs9_2URso4hbSuodo4AouBzb-rIX5-DrEqi63ni1HH7-391MLbNYgiEO/exec"; // Reemplaza con la URL correcta
 
-    // Cargar productos desde Google Sheets con GET
+    // Cargar productos desde Google Sheets con GET (solo para menus.html)
     async function fetchProducts() {
         try {
             const response = await fetch(apiUrl, {
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // Mostrar productos en las secciones correspondientes
+    // Mostrar productos en las secciones correspondientes (solo para menus.html)
     function displayProducts(products) {
         const sections = {
             Entradas: document.getElementById("entradas-container"),
@@ -45,8 +45,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             Postre: document.getElementById("postres-container")
         };
 
+        console.log("Contenedores de categorías:", sections);
+
         products.forEach(product => {
-            console.log("Producto:", product); // Depuración
+            console.log("Producto:", product);
             const item = document.createElement("div");
             item.classList.add("menu-item");
 
@@ -57,6 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             item.innerHTML = `
                 <img src="${imageUrl}" alt="${product.producto}">
                 <h3>${product.producto}</h3>
+                <h5>${product.descripcion || ''}</h5>
                 <p class="price">$${product.precio}</p>
                 <div class="controls">
                     <button class="decrease">-</button>
@@ -67,6 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             `;
 
             if (sections[product.Categorias]) {
+                console.log(`Añadiendo ${product.producto} a ${product.Categorias}`);
                 sections[product.Categorias].appendChild(item);
             } else {
                 console.warn(`Categoría no encontrada: ${product.Categorias}`);
@@ -92,7 +96,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Agregar productos al carrito
     function addToCart(product) {
         console.log("Añadiendo al carrito:", product);
-        // Si no hay id, usa el nombre del producto como identificador
         const identifier = product.id || product.producto;
         const existingProduct = cart.find(item => (item.id || item.producto) === identifier);
         if (existingProduct) {
@@ -170,12 +173,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Finalizar compra con POST
     document.querySelector(".checkout")?.addEventListener("click", async () => {
         const order = {
-            nombre: document.getElementById("address").value,
-            telefono: document.getElementById("phone").value,
-            direccion: document.getElementById("apartment").value,
-            productos: cart,
-            total: totalPrice.textContent.replace("$", "").replace(",", "")
+            nombre_cliente: document.getElementById("address").value.trim(),
+            telefono: document.getElementById("phone").value.trim(),
+            direccion: document.getElementById("apartment").value.trim(),
+            productos: cart.map(item => ({
+                id: item.id || item.producto,
+                precio: item.precio,
+                cantidad: item.quantity
+            })),
+            valor_total: parseFloat(totalPrice.textContent.replace(/[^\d.]/g, ""))
         };
+
+        if (!order.nombre_cliente || !order.telefono || !order.direccion || order.productos.length === 0) {
+            alert("Por favor complete todos los datos y agregue productos al carrito.");
+            return;
+        }
 
         try {
             const response = await fetch(apiUrl, {
@@ -195,7 +207,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const finalEnvio = envioEl.textContent;
                 const finalTotalPrice = totalPrice.textContent;
 
-                alert("Su compra ha sido finalizada, en un momento nuestro repartidor llevará su pedido.");
+                alert("Su compra ha sido finalizada. En un momento nuestro repartidor llevará su pedido.");
                 const cartSummary = document.querySelector(".cart-summary");
                 if (cartSummary) {
                     const finalSummary = document.createElement("div");
@@ -216,10 +228,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         } catch (error) {
             console.error("Error al enviar el pedido:", error);
-            alert("Error al enviar el pedido");
+            alert("Hubo un error al procesar el pedido. Inténtelo de nuevo.");
         }
     });
 
-    // Cargar productos al iniciar
-    fetchProducts();
+    // Determinar en qué página estamos y ejecutar la lógica correspondiente
+    if (window.location.pathname.includes("menus.html")) {
+        fetchProducts();
+    } else if (window.location.pathname.includes("carrito.html")) {
+        updateCartDisplay();
+    }
 });
