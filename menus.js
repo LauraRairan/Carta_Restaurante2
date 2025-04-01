@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const val_t_prodcut = document.getElementById("val_t_prodcut");
     const envioEl = document.getElementById("Envio");
     const totalPrice = document.getElementById("total-price");
-    const apiUrl = "https://script.google.com/macros/s/AKfycbyK_dhbSSxREs9_2URso4hbSuodo4AouBzb-rIX5-DrEqi63ni1HH7-391MLbNYgiEO/exec"; // Reemplaza con la URL correcta
+    const apiUrl = "https://script.google.com/macros/s/AKfycbyK_dhbSSxREs9_2URso4hbSuodo4AouBzb-rIX5-DrEqi63ni1HH7-391MLbNYgiEO/exec"; // Actualiza con la nueva URL si es necesario
 
     // Cargar productos desde Google Sheets con GET (solo para menus.html)
     async function fetchProducts() {
@@ -114,6 +114,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         let total = 0;
         let quantity = 0;
 
+        // Si el carrito está vacío, restablecer los valores
+        if (cart.length === 0) {
+            if (totalProducts) totalProducts.textContent = "0";
+            if (val_t_prodcut) val_t_prodcut.textContent = "$0";
+            if (envioEl) envioEl.textContent = `$${shippingCost.toLocaleString()}`;
+            if (totalPrice) totalPrice.textContent = `$${shippingCost.toLocaleString()}`;
+            return;
+        }
+
+        // Si hay productos, calcular los totales
         cart.forEach((item, index) => {
             const itemElement = document.createElement("div");
             itemElement.classList.add("product");
@@ -165,9 +175,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Limpiar carrito
     document.querySelector(".limpiar_ca")?.addEventListener("click", () => {
+        // Limpiar el carrito
         localStorage.removeItem("cart");
         cart.length = 0;
         updateCartDisplay();
+
+        // Limpiar la información del cliente
+        document.getElementById("address").value = "";
+        document.getElementById("apartment").value = "";
+        document.getElementById("phone").value = "";
+
+        // Eliminar el "Resumen Final de Compra" del DOM
+        const finalSummary = document.querySelector(".final-summary");
+        if (finalSummary) {
+            finalSummary.remove();
+        }
     });
 
     // Finalizar compra con POST
@@ -189,46 +211,44 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
+        console.log("Enviando pedido:", order); // Depuración
+
         try {
             const response = await fetch(apiUrl, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(order)
+                body: JSON.stringify(order),
+                mode: "no-cors", // Evita el preflight y el error CORS
+                redirect: "follow"
             });
 
-            if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status}`);
+            // No podemos leer la respuesta con mode: "no-cors", asumimos que se envió correctamente
+            const finalProducts = totalProducts.textContent;
+            const finalTotalProduct = val_t_prodcut.textContent;
+            const finalEnvio = envioEl.textContent;
+            const finalTotalPrice = totalPrice.textContent;
+
+            alert("Su compra ha sido finalizada. En un momento nuestro repartidor llevará su pedido.");
+            const cartSummary = document.querySelector(".cart-summary");
+            if (cartSummary) {
+                const finalSummary = document.createElement("div");
+                finalSummary.classList.add("final-summary");
+                finalSummary.innerHTML = `
+                    <h2>Resumen Final de Compra</h2>
+                    <p>Productos: ${finalProducts}</p>
+                    <p>Total producto: ${finalTotalProduct}</p>
+                    <p>Envío: ${finalEnvio}</p>
+                    <p>Total neto: ${finalTotalPrice}</p>
+                `;
+                cartSummary.appendChild(finalSummary);
             }
 
-            const result = await response.text();
-            if (result === "OK") {
-                const finalProducts = totalProducts.textContent;
-                const finalTotalProduct = val_t_prodcut.textContent;
-                const finalEnvio = envioEl.textContent;
-                const finalTotalPrice = totalPrice.textContent;
-
-                alert("Su compra ha sido finalizada. En un momento nuestro repartidor llevará su pedido.");
-                const cartSummary = document.querySelector(".cart-summary");
-                if (cartSummary) {
-                    const finalSummary = document.createElement("div");
-                    finalSummary.classList.add("final-summary");
-                    finalSummary.innerHTML = `
-                        <h2>Resumen Final de Compra</h2>
-                        <p>Productos: ${finalProducts}</p>
-                        <p>Total producto: ${finalTotalProduct}</p>
-                        <p>Envío: ${finalEnvio}</p>
-                        <p>Total neto: ${finalTotalPrice}</p>
-                    `;
-                    cartSummary.appendChild(finalSummary);
-                }
-
-                localStorage.removeItem("cart");
-                cart.length = 0;
-                updateCartDisplay();
-            }
+            localStorage.removeItem("cart");
+            cart.length = 0;
+            updateCartDisplay();
         } catch (error) {
             console.error("Error al enviar el pedido:", error);
-            alert("Hubo un error al procesar el pedido. Inténtelo de nuevo.");
+            alert("Hubo un error al procesar el pedido. Verifica la consola para más detalles.");
         }
     });
 
