@@ -1,7 +1,7 @@
 # 📌 Carta Interactiva del Restaurante No. 2 
 
 ## 📖 Descripción del Proyecto
-Este proyecto busca mejorar el menú interactivo de nuestro restaurante, permitiendo a los clientes acceder fácilmente a la oferta gastronómica y realizar pedidos en línea. Se emplean tecnologías asincrónicas como XHR, fetch y async/await para garantizar una experiencia fluida.
+Este proyecto busca mejorar el menú interactivo de nuestro restaurante, permitiendo a los clientes acceder fácilmente a la oferta gastronómica y realizar pedidos en línea. Se emplean tecnologías asincrónicas como fetch y async/await para garantizar una experiencia fluida.
 
 ## 🎯 Objetivo
 Desarrollar un menú interactivo con carrito de compras funcional, cargando los productos desde un servicio web y enviando los pedidos mediante POST en formato JSON.
